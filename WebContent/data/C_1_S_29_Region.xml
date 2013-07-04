@@ -1,0 +1,72 @@
+<Regions>
+<Region><id>	1	</id><name>	Agra	</name></Region>
+<Region><id>	2	</id><name>	Aligarh	</name></Region>
+<Region><id>	3	</id><name>	Allahabad	</name></Region>
+<Region><id>	4	</id><name>	Ambedkar Nagar	</name></Region>
+<Region><id>	5	</id><name>	Auraiya	</name></Region>
+<Region><id>	6	</id><name>	Azamgarh	</name></Region>
+<Region><id>	7	</id><name>	Badaun	</name></Region>
+<Region><id>	8	</id><name>	Baghpat	</name></Region>
+<Region><id>	9	</id><name>	Bahraich	</name></Region>
+<Region><id>	10	</id><name>	Ballia	</name></Region>
+<Region><id>	11	</id><name>	Balrampur	</name></Region>
+<Region><id>	12	</id><name>	Banda	</name></Region>
+<Region><id>	13	</id><name>	Bara Banki	</name></Region>
+<Region><id>	14	</id><name>	Bareilly	</name></Region>
+<Region><id>	15	</id><name>	Basti	</name></Region>
+<Region><id>	16	</id><name>	Bijnor	</name></Region>
+<Region><id>	17	</id><name>	Bulandshahr	</name></Region>
+<Region><id>	18	</id><name>	Chandauli	</name></Region>
+<Region><id>	19	</id><name>	Chitrakoot	</name></Region>
+<Region><id>	20	</id><name>	Deoria	</name></Region>
+<Region><id>	21	</id><name>	Etah	</name></Region>
+<Region><id>	22	</id><name>	Etawah	</name></Region>
+<Region><id>	23	</id><name>	Faizabad	</name></Region>
+<Region><id>	24	</id><name>	Farrukhabad	</name></Region>
+<Region><id>	25	</id><name>	Fatehpur	</name></Region>
+<Region><id>	26	</id><name>	Firozabad	</name></Region>
+<Region><id>	27	</id><name>	Gautam Buddha Nagar	</name></Region>
+<Region><id>	28	</id><name>	Ghaziabad	</name></Region>
+<Region><id>	29	</id><name>	Ghazipur	</name></Region>
+<Region><id>	30	</id><name>	Gonda	</name></Region>
+<Region><id>	31	</id><name>	Gorakhpur	</name></Region>
+<Region><id>	32	</id><name>	Hardoi	</name></Region>
+<Region><id>	33	</id><name>	Hathras	</name></Region>
+<Region><id>	34	</id><name>	Jalaun	</name></Region>
+<Region><id>	35	</id><name>	Jaunpur	</name></Region>
+<Region><id>	36	</id><name>	Jhansi	</name></Region>
+<Region><id>	37	</id><name>	Jyotiba Phule Nagar	</name></Region>
+<Region><id>	38	</id><name>	Kannauj	</name></Region>
+<Region><id>	39	</id><name>	Kanpur	</name></Region>
+<Region><id>	40	</id><name>	Kanpur Dehat	</name></Region>
+<Region><id>	41	</id><name>	Kaushambi	</name></Region>
+<Region><id>	42	</id><name>	Kushinagar	</name></Region>
+<Region><id>	43	</id><name>	Lakhimpur Kheri	</name></Region>
+<Region><id>	44	</id><name>	Lalitpur	</name></Region>
+<Region><id>	45	</id><name>	Lucknow	</name></Region>
+<Region><id>	46	</id><name>	Maharajganj	</name></Region>
+<Region><id>	47	</id><name>	Mahoba	</name></Region>
+<Region><id>	48	</id><name>	Mainpuri	</name></Region>
+<Region><id>	49	</id><name>	Mathura	</name></Region>
+<Region><id>	50	</id><name>	Mau	</name></Region>
+<Region><id>	51	</id><name>	Meerut	</name></Region>
+<Region><id>	52	</id><name>	Mirzapur	</name></Region>
+<Region><id>	53	</id><name>	Moradabad	</name></Region>
+<Region><id>	54	</id><name>	Muzaffarnagar	</name></Region>
+<Region><id>	55	</id><name>	Pilibhit	</name></Region>
+<Region><id>	56	</id><name>	Pratapgarh	</name></Region>
+<Region><id>	57	</id><name>	Rae Bareli	</name></Region>
+<Region><id>	58	</id><name>	Rampur	</name></Region>
+<Region><id>	59	</id><name>	Saharanpur	</name></Region>
+<Region><id>	60	</id><name>	Sant Kabir Nagar	</name></Region>
+<Region><id>	61	</id><name>	Sant Ravi Das Nagar	</name></Region>
+<Region><id>	62	</id><name>	Shahjahanpur	</name></Region>
+<Region><id>	63	</id><name>	Shravasti	</name></Region>
+<Region><id>	64	</id><name>	Siddharth Nagar	</name></Region>
+<Region><id>	65	</id><name>	Sitapur	</name></Region>
+<Region><id>	66	</id><name>	Sonbhadra	</name></Region>
+<Region><id>	67	</id><name>	Sultanpur	</name></Region>
+<Region><id>	68	</id><name>	Unnao	</name></Region>
+<Region><id>	69	</id><name>	Varanasi	</name></Region>
+</Regions>
+
