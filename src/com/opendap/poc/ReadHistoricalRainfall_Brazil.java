@@ -247,11 +247,9 @@ public class ReadHistoricalRainfall_Brazil {
 						    	   System.out.println(Soil.toString());
 						    	   
 						    	  if(!Soil.equals(""))
-						    	  {
-									rds.WriteCropInput(Soil, filepath, vLat, vLon, i,WeatherFileName,year,century,Crop);
-						    	    System.out.println("Hello World");
-						    	  }
-									//convert the soil in a smaller format to be read by the cropmodel
+						    		  rds.WriteCropInput(Soil, filepath, vLat, vLon, i,WeatherFileName,year,century,Crop);
+						 
+						    	  //convert the soil in a smaller format to be read by the cropmodel
 						    	  if (Soil.equals("Silty Clay")) Soil = "SiltyClay";
 								  else if (Soil.equals("Sandy Clay")) Soil = "SandyClay";
 								  else if (Soil.equals("Sandy Clay Loam")) Soil = "SandyClLm";	
@@ -264,6 +262,7 @@ public class ReadHistoricalRainfall_Brazil {
 									    	   
 						    	  String inputfile = "Mo-"+vLat+"-"+vLon+"-"+i+"-"+Soil+".INP";
 						    	  SimulateCrops sim = new SimulateCrops();
+						    	  System.out.println(sim.CallCropModel(inputfile, filepath, DistrictID, Crop));
 						    	  vSoilSimulation.add(sim.CallCropModel(inputfile, filepath, DistrictID, Crop));
 					   	    	}//end of the soil loop 
 					    	    vYearSimulations.add(vSoilSimulation);

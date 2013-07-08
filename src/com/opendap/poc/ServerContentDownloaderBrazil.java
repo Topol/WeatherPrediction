@@ -315,6 +315,7 @@ public class ServerContentDownloaderBrazil {
 			modelINP.WriteInputFiles(filePath, "soil.sol");
 			modelINP.WriteInputFiles(filePath, "GATI0301.WTH");
 			modelINP.WriteInputFiles(filePath, "SoilType.tsv");
+			modelINP.WriteInputFiles(filePath, "DSSATCSM40");
 			//rnhmm.WriteInputFiles(filePath, "GCM.txt");
 			//rnhmm.WriteInputFiles(filePath, "DSSATCSM40");
 			modelINP.WriteInputFiles(filePath, "1-21.WTH");

@@ -33,8 +33,8 @@ public class SimulateCrops {
 					//System.out.println(line.substring(39,43));
 					CropOutput = line.substring(39,43);
 				}
-				//else 
-					//CropOutput = "0";
+				else 
+					CropOutput = "0";
 				//CropYeild.concat(line);
 				//if(line.contains("Invalid format in file.")) return "Error";
 				//if(line.contains("End-of-file encountered in input file.")) return "Error";				
@@ -43,7 +43,8 @@ public class SimulateCrops {
 			}
 			
 		} 
-		catch(IOException e1) {return null;}
+		catch(IOException e1) {
+			e1.printStackTrace();return null;}
 		catch(InterruptedException e2) {System.out.println(e2);} 
 		catch(Exception e) {System.out.println(e);}
 		//System.out.println("Done"); 
