@@ -3,12 +3,17 @@ package com.opendap.poc;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
+import com.weatherprediction.servlet.CropModel;
+import com.weatherprediction.servlet.SimDetailsVO;
 
 import ucar.ma2.Array;
 import ucar.ma2.Index;
@@ -17,7 +22,21 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 public class ReadHistoricalRainfall {
-	public ReadHistoricalRainfall(){}
+	
+	private String folder = null;
+	public ReadHistoricalRainfall(){
+		try {
+			Properties properties = new Properties();
+	        File file = new File(this.getClass().getResource("/ServerContentDownloader.properties").getFile());
+			FileInputStream fis = new FileInputStream(file);
+			properties.load(fis);
+			folder = properties.getProperty("folder");
+			System.out.println("Folder : " + folder);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public Vector ReadCDFFile(String folderPath2,String file)
 	{
@@ -42,17 +61,17 @@ public class ReadHistoricalRainfall {
 	}
 	
 	//public void makeCropInputFiles(String folderPath2,double Lat,double Lon)
-	public void makeCropInputFiles(String Path, String DistrictID,String Crop)
+	public void makeCropInputFiles(final long simId, String Path, long CountryNo, String DistrictID, String Crop, String CropSeason, String GCM)
 	{
 		
 		/*Get the rainfall co-ordinates for the dataset */
+		SimDetailsVO simDetailsVO = CropModel.getSimDetailsMap().get(simId); 
+		//simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(" -Extracting Grid Co-ordinates&lt;/br&gt;"));
 		GridCoordinates grid = new GridCoordinates();
-	    String folderPath = "Data" + "/" + Path;
-		//String folderPath = "Data" + "/" + "2011-08-08";
-		String folderPath2 = folderPath + "/"+DistrictID + "/";
-	    //String folderPath2 = folderPath + "/"+DistrictID;
-		//System.out.println(folderPath2);
-		Vector vec = grid.Coordinates(folderPath2);
+		String folderPath = folder + File.separator + Path + File.separator + simId + File.separator + CountryNo ;
+	    //String folderPath = "Data" + "/" + Path;
+		String filepath = folderPath + "/"+DistrictID;
+	    Vector vecGrid = grid.Coordinates(filepath+"/GridCoordinates.tsv");
 		Vector TminNR = new Vector();
 		Vector TminR = new Vector();
 		Vector TmaxNR = new Vector();
@@ -62,24 +81,23 @@ public class ReadHistoricalRainfall {
 		Vector vGrid = new Vector();
 		double Lon = 0.0;
 		double Lat = 0.0;
-		int vYears = 59;
-		int vSimulations = 100;
+		int vYears = 11;
+		int vSimulations = 10;
 		int vSoil = 0;
 		Vector vSoilType;
-		
-		for(int d=0; d<vec.size();d++){
+        System.out.println(vecGrid.size());
+        /**************Make an n dimensional dataset for input as cropmodel weather file******************/
+		for(int d=0; d<vecGrid.size();d++){
 			Vector vGridParams = new Vector();
-			Lon = Double.parseDouble(vec.get(d).toString());
-			Lat = Double.parseDouble(vec.get(d+1).toString());
-			TminNR = ReadCDFFile(folderPath2,"TminNR"+vec.get(d+1).toString()+"-"+vec.get(d).toString()+".tsv");
-			TminR = ReadCDFFile(folderPath2,"TminR"+vec.get(d+1).toString()+"-"+vec.get(d).toString()+".tsv");
-			TmaxNR = ReadCDFFile(folderPath2,"TmaxNR"+vec.get(d+1).toString()+"-"+vec.get(d).toString()+".tsv");
-			TmaxR = ReadCDFFile(folderPath2,"TmaxR"+vec.get(d+1).toString()+"-"+vec.get(d).toString()+".tsv");
-			SRadR = ReadCDFFile(folderPath2,"SRadR"+vec.get(d+1).toString()+"-"+vec.get(d).toString()+".tsv");
-			SRadNR = ReadCDFFile(folderPath2,"SRadNR"+vec.get(d+1).toString()+"-"+vec.get(d).toString()+".tsv");
-			
-			//System.out.println(TminNR.firstElement());
-			
+			//simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append("-Extracting Weather Parameters Per Grid Point&lt;/br&gt;"));
+			Lon = Double.parseDouble(vecGrid.get(d).toString());
+			Lat = Double.parseDouble(vecGrid.get(d+1).toString());
+			TminNR = ReadCDFFile(filepath+"/","TminNR"+vecGrid.get(d+1).toString()+"-"+vecGrid.get(d).toString()+".tsv");
+			TminR = ReadCDFFile(filepath+"/","TminR"+vecGrid.get(d+1).toString()+"-"+vecGrid.get(d).toString()+".tsv");
+			TmaxNR = ReadCDFFile(filepath+"/","TmaxNR"+vecGrid.get(d+1).toString()+"-"+vecGrid.get(d).toString()+".tsv");
+			TmaxR = ReadCDFFile(filepath+"/","TmaxR"+vecGrid.get(d+1).toString()+"-"+vecGrid.get(d).toString()+".tsv");
+			SRadR = ReadCDFFile(filepath+"/","SRadR"+vecGrid.get(d+1).toString()+"-"+vecGrid.get(d).toString()+".tsv");
+			SRadNR = ReadCDFFile(filepath+"/","SRadNR"+vecGrid.get(d+1).toString()+"-"+vecGrid.get(d).toString()+".tsv");
 			vGridParams.add(TminNR);
 			vGridParams.add(TminR);
 			vGridParams.add(TmaxNR);
@@ -88,27 +106,27 @@ public class ReadHistoricalRainfall {
 			vGridParams.add(Lon);
 			vGrid.add(vGridParams);
 			d++;			
-			
 		}
-			 
+			
+		/**************Make an n dimensional dataset for input as cropmodel weather file******************/	 
+		int pointer = vGrid.size();    //returns the size of the weather file
 		
-		int pointer = vGrid.size();
-	    try {
+		try {
 	      
-	      //System.out.println("Hesd");
-	      //Get the number of soils in the region
+			/**************Get the number of soil in region******************/
 	      	Soil sol = new Soil();
-	      	vSoilType = (Vector)sol.NumberofSoils(folderPath2);
-	      	vSoil = Integer.parseInt(vSoilType.get(0).toString()); 
-	      
-		      try {
+	      	//simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(" -Extracting Number of Soils For Each Unit&lt;/br&gt;"));
+	      	vSoilType = (Vector)sol.NumberofSoils(filepath);
+	      	vSoil = Integer.parseInt(vSoilType.get(0).toString());
+	      	try {
 		        String line = null; //not declared within while loop
 		        /*Based on the simulations values call the soil files*/
-		        Vector vGridSimulations = new Vector();
-		    	System.out.println("Test");
-		       for (int iPointer=0;iPointer<pointer;iPointer++)
-		       {
-		    	   Vector vGridParams = (Vector) vGrid.get(iPointer);
+		        Vector vGridSimulations = new Vector();/*************************EachGridPoints*******************************/
+		        
+		        for (int iPointer=0;iPointer<pointer;iPointer++)
+		        {	
+		        	
+		    	    Vector vGridParams = (Vector) vGrid.get(iPointer);
 		    		TminNR = (Vector) vGridParams.get(0);
 		    		TmaxNR = (Vector) vGridParams.get(1);
 		    		TmaxNR = (Vector) vGridParams.get(2);
@@ -117,23 +135,24 @@ public class ReadHistoricalRainfall {
 		    		double vLat = Double.parseDouble(vGridParams.get(4).toString());
 		    		double vLon = Double.parseDouble(vGridParams.get(5).toString());
 		    		
-		    	   File aFile = new File(folderPath2+"HMM_rainfall-"+vLat+"-"+vLon+".txt").getAbsoluteFile();
-		    	   System.out.println(folderPath2+"HMM_rainfall-"+vLat+"-"+vLon+".txt");
-		    	   BufferedReader input =  new BufferedReader(new FileReader(aFile));
-		    	   Vector vYearSimulations = new Vector();
+		    	    File aFile = new File(filepath+"/HMM_rainfall-"+vLat+"-"+vLon+".txt").getAbsoluteFile();
+		    	    System.out.println(filepath+"/HMM_rainfall-"+vLat+"-"+vLon+".txt");
+		    	    BufferedReader input =  new BufferedReader(new FileReader(aFile));
+		    	    Vector vYearSimulations = new Vector();
 			    	System.out.println("************************************************");
 			    	System.out.println("Gridpoint: " + iPointer);
 			    	System.out.println("************************************************");
-			       /*******************Simulations**************************/	   
-		            String year = ""; 
+			        String year = ""; 
 		    	    String date = ""; 
+		    	   
+		    	    //simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(" -Building Weather Input Files For Crop Model&lt;/br&gt;")); 
 		    	   
 		       /*******************Years*******************************/	   
 			    	for ( int i = 0; i < 59; i++)//no of years
 			        {	
+			    		//simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(" -Year "+ i +"&lt;/br&gt;"));
 			        	Vector a = new Vector();
-				        
-			    		ReadWithScanner rds = new ReadWithScanner();
+				        ReadWithScanner rds = new ReadWithScanner();
 				    		
 			    		/********************************************************************/
 			    		String century = "19";
@@ -194,102 +213,111 @@ public class ReadHistoricalRainfall {
 			    			a.add(year+date + "  " + SRadNR.get(9).toString().substring(0,4) + "  " +TmaxNR.get(9).toString().substring(0,4) + "  " +TminNR.get(9).toString().substring(0,4) + "  "+0);
 
 			    		}
-				    		String filename = folderPath2 +"/Mo-";
-				            //String WeatherFileName = "Mo-"+vLat+"-"+vLon+"-"+i+".WTH";
-				        	String WeatherFileName = iPointer+"-"+i+".WTH";
-				    	    //File writeFile = new File(folderPath2 +"/Mo-"+vLat+"-"+vLon+"-"+i+".WTH");
-				        	File writeFile = new File(folderPath2 +"/"+WeatherFileName);
-				        	Writer output = new BufferedWriter(new FileWriter(writeFile));
-						    output.write("*WEATHER DATA : Tonk,Rajasthan,India");  
-						    output.write("\n");
-						    output.write("@ INSI      LAT     LONG  ELEV   TAV   AMP REFHT WNDHT");
-						    output.write("\n");
-						    output.write("GATI   "+vLat+"  "+-vLon+"     0  19.1   8.6   2.0   3.5");
-						    output.write("\n");
-						    output.write("@DATE  SRAD  TMAX  TMIN  RAIN");
-						    output.write("\n");
-						    
-						    /* Generate the weather file at this point */
-				    	    for(int k = 0; k<a.size();k++)
-				    	    {
-				    	    	output.write(a.get(k).toString());
-				    	    	output.write("\n");
-				    	    	output.flush();
-				    	    }
-				    	    output.close();
-				    	    /*For each Simulation run the crop model for each soil type*/
-				    	    Vector vSoilSimulation = new Vector();
-				    	    for(int iSoil = 0; iSoil <vSoil;iSoil++)
-				   	    	{
-					    	   String Soil = sol.GetSoilByID(vSoilType.get(iSoil + 1).toString());
-					    	   
-					    	   //System.out.println(vSoilType.get(iSoil + 1).toString());
-					    	   if(!Soil.equals(""))
-									rds.WriteCropInput(Soil, folderPath2, vLat, vLon, i,WeatherFileName,year,century,Crop);
-					    	  //convert the soil in a smaller format to be read by the cropmodel
-					    	  if (Soil.equals("Silty Clay")) Soil = "SiltyClay";
-							  else if (Soil.equals("Sandy Clay")) Soil = "SandyClay";
-							  else if (Soil.equals("Sandy Clay Loam")) Soil = "SandyClLm";	
-							  else if (Soil.equals("Clay Loam")) Soil = "ClayLoam";
-							  else if (Soil.equals("Silty Clay Loam")) Soil = "SiltyClLm";
-							  else if (Soil.equals("Silt Loam")) Soil = "SiltLoam";
-							  else if (Soil.equals("Sandy Loam")) Soil = "SandyLoam";
-							  else if (Soil.equals("Loamy Sand")) Soil = "LoamySand";					
-							
-								    	   
-					    	  String inputfile = "Mo-"+vLat+"-"+vLon+"-"+i+"-"+Soil+".INP";
-					    	  SimulateCrops sim = new SimulateCrops();
-					    	  vSoilSimulation.add(sim.CallCropModel(inputfile, Path, DistrictID, Crop));
-				   	    	}//end of the soil loop
-				    	    vYearSimulations.add(vSoilSimulation);
-		        }//end of the year loop
-		        
-		        
-		        //}//end of simulations
-		       vGridSimulations.add(vYearSimulations);
-		       }//run for each grid
+			    		/********************Generate the Crop Input Headers********************/
+	    				//simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(" -Writing Weather File for each year and each grid point&lt;/br&gt;"));
+	    				String filename = filepath +"/Mo-";
+			            System.out.println(filepath);
+	    				//String WeatherFileName = "Mo-"+vLat+"-"+vLon+"-"+i+".WTH";
+			        	String WeatherFileName = iPointer+"-"+i+".WTH";
+			    	    //File writeFile = new File(folderPath2 +"/Mo-"+vLat+"-"+vLon+"-"+i+".WTH");
+			        	File writeFile = new File(filepath, WeatherFileName);
+					    Writer output = new BufferedWriter(new FileWriter(writeFile));
+			        	output.write("*WEATHER DATA : Tonk,Rajasthan,India");  
+					    output.write("\n");
+					    output.write("@ INSI      LAT     LONG  ELEV   TAV   AMP REFHT WNDHT");
+					    output.write("\n");
+					    output.write("GATI   "+vLat+"  "+-vLon+"     0  19.1   8.6   2.0   3.5");
+					    output.write("\n");
+					    output.write("@DATE  SRAD  TMAX  TMIN  RAIN");
+					    output.write("\n");
+					    output.flush();
+					    /********************Generate the Weather Files Here********************/
+					    for(int k = 0; k<a.size();k++)
+			    	    {
+			    	    	output.write(a.get(k).toString());
+			    	    	output.write("\n");
+			    	    	output.flush();
+			    	    }
+			    	    output.close();
+			    	    
+			    	    /********************Run the simulations for each soil type********************/
+			    	    Vector vSoilSimulation = new Vector();
+			    	    //simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(" -Building INP files for DSSAT&lt;/br&gt;"));
+			    	    for(int iSoil = 0; iSoil <vSoil;iSoil++)
+			   	    	{
+				    	   String Soil = sol.GetSoilByID(filepath,vSoilType.get(iSoil + 1).toString());
+				    	   
+				    	   System.out.println(vSoilType.get(iSoil + 1).toString());
+				    	   System.out.println(Soil.toString());
+				    	   
+				    	  if(!Soil.equals(""))
+				    		  rds.WriteCropInput(Soil, filepath, vLat, vLon, i,WeatherFileName,year,century,Crop);
+				 
+				    	  //convert the soil in a smaller format to be read by the cropmodel
+				    	  if (Soil.equals("Silty Clay")) Soil = "SiltyClay";
+						  else if (Soil.equals("Sandy Clay")) Soil = "SandyClay";
+						  else if (Soil.equals("Sandy Clay Loam")) Soil = "SandyClLm";	
+						  else if (Soil.equals("Clay Loam")) Soil = "ClayLoam";
+						  else if (Soil.equals("Silty Clay Loam")) Soil = "SiltyClLm";
+						  else if (Soil.equals("Silt Loam")) Soil = "SiltLoam";
+						  else if (Soil.equals("Sandy Loam")) Soil = "SandyLoam";
+						  else if (Soil.equals("Loamy Sand")) Soil = "LoamySand";					
+						
+							    	   
+				    	  String inputfile = "Mo-"+vLat+"-"+vLon+"-"+i+"-"+Soil+".INP";
+				    	  SimulateCrops sim = new SimulateCrops();
+				    	  System.out.println(sim.CallCropModel(inputfile, filepath, DistrictID, Crop));
+				    	  vSoilSimulation.add(sim.CallCropModel(inputfile, filepath, DistrictID, Crop));
+			   	    	}//end of the soil loop 
+			    	    vYearSimulations.add(vSoilSimulation);
+						/********************Run the simulations for each year (end)********************/
+					}//end of the year loop
+			        vGridSimulations.add(vYearSimulations);
+			       }//run for each grid
 		        
 		      
-		       System.out.println("GridPoint\tSimulation\tYear\tSoil\tCropOutput"); 
-		       //String pathname = "Data/2011-07-21/188/";
-		       String pathname = folderPath2;
-		       File writeFile = new File(pathname+"HistoricalResults.tsv");
-		       Writer output = new BufferedWriter(new FileWriter(writeFile));
-		       
-		       for(int i =0; i < vGridSimulations.size();i++)
-		       {
-		    	   Vector b = (Vector) vGridSimulations.get(i);
-	    		   /***************Get the Latitude and Longitude***************/
-		    	   Vector vGridParams = (Vector) vGrid.get(i);
-		    	   String Latitude = vGridParams.get(4).toString();
-		    	   String Longitude = vGridParams.get(5).toString();
-		    	   System.out.println("********************************************************************");
-		    	   //for(int j =0; j < a.size();j++)
-		    	   //{
-		    		 //  Vector b = (Vector) a.get(j);//vYearSimulations
-		    		   for(int k =0; k < b.size();k++)
-		    		   {
-		    			   /********************************************************************/
-				    		String century = "19";
-				    		String year = "";
-				    		if(k < 50) year = Integer.toString(k+50);
-				    		else {year =  "0" + Integer.toString(k-50);century = "20";}
-				    		
-				    	   Vector c = (Vector) b.get(k);//vCropSimulations
-		    			   for(int l =0; l < c.size();l++)
-			    		   {
-		    				   String soilType = vSoilType.get(l + 1).toString().substring(0,4);
-		    				   //System.out.println(c.get(l));
-			    			   System.out.println( Latitude + "\t" + Longitude + "\t"+ i +"\t"+ century + year + "\t"+soilType+ "\t"+ c.get(l).toString()); 
-			    			   output.write( Latitude + "\t" + Longitude + "\t"+ i +"\t"+ century + year + "\t"+soilType+ "\t"+ c.get(l).toString());
-			    			   output.write("\n");
-			    			   output.flush();
-			    		   }
-		    		   }
-		       }
-		    	   
-		      }catch(Exception e){e.printStackTrace();}
-	    }catch(Exception e){e.printStackTrace();}
+		        /********************Writes to an external file the outputs********************/	
+		    	System.out.println("GridPoint\tSimulation\tYear\tSoil\tCropOutput"); 
+		        //String pathname = "Data/2011-07-21/188/";
+		        String pathname = filepath;
+		        File writeFile = new File(pathname,"HistoricalResults.tsv");
+		        Writer output = new BufferedWriter(new FileWriter(writeFile));
+		        
+		        for(int i =0; i < vGridSimulations.size();i++)
+		        {
+		     	   Vector b = (Vector) vGridSimulations.get(i);
+		    		   /***************Get the Latitude and Longitude***************/
+		     	   Vector vGridParams = (Vector) vGrid.get(i);
+		     	   String Latitude = vGridParams.get(4).toString();
+		     	   String Longitude = vGridParams.get(5).toString();
+		     	   System.out.println("********************************************************************");
+		     	//for(int j =0; j < a.size();j++)
+		     	   //{
+		     		 //  Vector b = (Vector) a.get(j);//vYearSimulations
+		     		   for(int k =0; k < b.size();k++)
+		     		   {
+		     			   /********************************************************************/
+		    		    		String century = "19";
+		    		    		String year = "";
+		    		    		if(k < 50) year = Integer.toString(k+50);
+		    		    		else {year =  "0" + Integer.toString(k-50);century = "20";}
+		    		    		
+		    		    	   Vector c = (Vector) b.get(k);//vCropSimulations
+		     			   for(int l =0; l < c.size();l++)
+		    	    		   {
+		     				   String soilType = vSoilType.get(l + 1).toString().substring(0,4);
+		     				   //System.out.println(c.get(l));
+		     				  simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(Latitude + "\t" + Longitude + "\t"+ i +"\t"+ century + year + "\t"+soilType+ "\t"+ c.get(l).toString() + "&lt;/br&gt;") );
+		     				       System.out.println( Latitude + "\t" + Longitude + "\t"+ i +"\t"+ century + year + "\t"+soilType+ "\t"+ c.get(l).toString()); 
+		    	    			   output.write( Latitude + "\t" + Longitude + "\t"+ i +"\t"+ century + year + "\t"+soilType+ "\t"+ c.get(l).toString());
+		    	    			   output.write("\n");
+		    	    			   output.flush();
+		    	    		   }
+		     		   }
+		        }
+		     	   
+		       }catch(Exception e){e.printStackTrace();}
+		    }catch(Exception e){e.printStackTrace();}
+
+		    }
 	}
-	
-}

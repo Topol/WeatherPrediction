@@ -101,7 +101,7 @@ import java.util.Date;
 			 String State = objWeather.getState();
 			 long CountryNo = objWeather.getCountryNo();
 			 //String UnitID = objWeather.getDistrict();//kheda
-			 String UnitID = "188";//kheda
+			 String UnitID = "187";//kheda
 			 //String UnitID = "188";//kheda
 			 String Crop = objWeather.getCrop();
 			 String CropSeason = objWeather.getCropSeason();
@@ -109,10 +109,10 @@ import java.util.Date;
 		     System.out.println(simpleDateFormat.format(new Date()));
 			 
 			 /**************Download server dataset******************/
-			 //ServerContentDownloader serverContentDownloader =  new ServerContentDownloader();
-			 //serverContentDownloader.createAndSaveUrl(simpleDateFormat.format(new Date()), DistrictID);
-			 ServerContentDownloaderBrazil serverContentDownloader =  new ServerContentDownloaderBrazil();
+			 ServerContentDownloader serverContentDownloader =  new ServerContentDownloader();
 			 serverContentDownloader.createAndSaveUrl(simId, simpleDateFormat.format(new Date()), CountryNo, UnitID, Crop, CropSeason, GCM);
+			 //ServerContentDownloaderBrazil serverContentDownloader =  new ServerContentDownloaderBrazil();
+			 //serverContentDownloader.createAndSaveUrl(simId, simpleDateFormat.format(new Date()), CountryNo, UnitID, Crop, CropSeason, GCM);
 			 
 			 simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(" -Running Simulation&lt;/br&gt;"));
 			 
@@ -130,10 +130,10 @@ import java.util.Date;
 				
 			
 			/***************** Build the crop output based on the historical data ********************/
-			// ReadHistoricalRainfall hisrain = new ReadHistoricalRainfall();
-			//hisrain.makeCropInputFiles(simpleDateFormat.format(new Date()),UnitID,Crop);
-			ReadHistoricalRainfall_Brazil hisrain = new ReadHistoricalRainfall_Brazil();
+			 ReadHistoricalRainfall hisrain = new ReadHistoricalRainfall();
 			hisrain.makeCropInputFiles(simId, simpleDateFormat.format(new Date()), CountryNo, UnitID, Crop, CropSeason, GCM);
+			//ReadHistoricalRainfall_Brazil hisrain = new ReadHistoricalRainfall_Brazil();
+			//hisrain.makeCropInputFiles(simId, simpleDateFormat.format(new Date()), CountryNo, UnitID, Crop, CropSeason, GCM);
 			 /***********************Write the output in Netcdf file format*****************************/
 			 /*WriteNetCDF writefile = new WriteNetCDF();
 			writefile.WriteCDFFile(simpleDateFormat.format(new Date()), DistrictID, Crop);

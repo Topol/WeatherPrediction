@@ -34,7 +34,7 @@ public class ReadHistoricalRainfall_Brazil {
 				FileInputStream fis = new FileInputStream(file);
 				properties.load(fis);
 				folder = properties.getProperty("folder");
-				System.out.println("Folder2 : " + folder);
+				System.out.println("Folder : " + folder);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -267,12 +267,8 @@ public class ReadHistoricalRainfall_Brazil {
 					   	    	}//end of the soil loop 
 					    	    vYearSimulations.add(vSoilSimulation);
 					/********************Run the simulations for each year (end)********************/
-				    	    
-		        }//end of the year loop
-		        
-		        
-		        
-			    vGridSimulations.add(vYearSimulations);
+				}//end of the year loop
+		        vGridSimulations.add(vYearSimulations);
 		       }//run for each grid
 		       
 		        /********************Writes to an external file the outputs********************/	

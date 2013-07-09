@@ -24,6 +24,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import com.weatherprediction.servlet.CropModel;
+import com.weatherprediction.servlet.SimDetailsVO;
+
 import javax.xml.*;
 
 //import sun.jdbc.odbc.JdbcOdbcDriver;
@@ -119,10 +123,9 @@ public class ServerContentDownloader {
 		Properties properties = new Properties();
 		// Read the properties file
 		//File file = new File("ServerContentDownloader.properties");
-		File file = new File("ServerContentDownloader.properties");
+		File file = new File(this.getClass().getResource("/ServerContentDownloader.properties").getFile());
 		FileInputStream fis = new FileInputStream(file);
 		properties.load(fis);
-
 		useProxy = Boolean.parseBoolean(properties.getProperty("UseProxy"));
 		if(useProxy){
 			// Read the Proxy Host
@@ -182,18 +185,19 @@ public class ServerContentDownloader {
 	 *
 	 *
 	 */
-	public void createAndSaveUrl(String Path, String DistrictID){
+	public void createAndSaveUrl(final long simId, String Path, long CountryNo, String DistrictID, String Crop, String CropSeason, String GCM){
 
 		/* build connection to the database */
 		try	{
 			//SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			String folderPath = folder + "/" + Path;
+			String folderPath = folder + File.separator + Path + File.separator + simId + File.separator + CountryNo ;
 			//String folderPath = folder + "/" + simpleDateFormat.format(new Date());
 			File dir = new File(folderPath);
 			dir.mkdirs();
 			int id = 1;
 			//String DistrictID ="188";
-			File aFile = new File("DistrictCoordinates.txt");
+			File aFile = new File(this.getClass().getResource("/DistrictCoordinates.txt").getFile());
+			//File aFile = new File("DistrictCoordinates.txt");
 			 String LatLong = "";
 			double maxLat = 0.0;
 			double minLat = 0.0;
@@ -255,90 +259,26 @@ public class ServerContentDownloader {
 			}catch(Exception e){}
 				     
 				    	 
-			/*Connection conn = null;
-			Connection conn2 = null;
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost/IndiaAgriculture?" +"user=root&password=root_pwd");
-			conn2 = DriverManager.getConnection("jdbc:mysql://localhost/IndiaAgriculture?" +"user=root&password=root_pwd");
-		    ResultSet results, results2;
-		    PreparedStatement sql,sql2;
-			sql = conn.prepareStatement("Select Distinct ID,ID_2 from districts_shape where ID =461");
-			results = sql.executeQuery();
-			String id_2 = "";
-			while (results.next()){
-			DistrictID = results.getString(1);
-			id_2 = results.getString(2);
-			//------------------------------District Locations-----------------------------------/
-			String LatLong = "";
-			double id2 = Double.parseDouble(id_2);
-			if (id2 != 15732 && id2 != 15846 && id2 != 16302 && id2 != 16304 && id2 != 15823){
-				String sqlquery = "Select AsWKT(ogc_geom) from districts_table where ID_2 = '" + id_2 +"'";
-				sql2 = conn2.prepareStatement(sqlquery);
-				results2 = sql2.executeQuery();
-				while (results2.next()){
-					LatLong = results2.getString(1);
-				}
-				LatLong = LatLong.replace("MULTIPOLYGON(((", "");
-				LatLong = LatLong.replace(")))", "");
-				LatLong = LatLong.replace("))", ",");
-				LatLong = LatLong.replace("((", "");
-
-				//defining the area of the resterization
-				Vector LatVec = new Vector();
-				Vector LonVec = new Vector();
-            	StringTokenizer st = new StringTokenizer(LatLong,",");
-            	StringTokenizer stRaster = new StringTokenizer(LatLong,",");
-            	while(stRaster.hasMoreElements() ){
-					String next = stRaster.nextElement().toString();
-					StringTokenizer st3 = new StringTokenizer(next);
-					Double Lat = Double.parseDouble(st3.nextElement().toString());
-					Double Lon = Double.parseDouble(st3.nextElement().toString());
-					LatVec.add(Lat);
-					LonVec.add(Lon);
-    			}
-				Object maxLat = Collections.max(LatVec);
-    			Object minLat = Collections.min(LatVec);
-    			Object maxLon = Collections.max(LonVec);
-    			Object minLon = Collections.min(LonVec);
-    			
-    			Double GCMLat = (Double.parseDouble(maxLat.toString())+Double.parseDouble(minLat.toString()))/2;
-    			Double GCMLon = (Double.parseDouble(maxLon.toString())+Double.parseDouble(minLon.toString()))/2;
-    			double GCMLatMin = GCMLat - 10; 
-    			double GCMLatMax = GCMLat + 10;
-    			double GCMLonmin = GCMLon - 10;
-    			double GCMLonMax = GCMLon + 10;*/
-    		/* this part should be removed later */	
-    		/*	double maxLat = 73.0095;
-    			double minLat = 74.5825;
-    			double maxLon = 25.1084;
-    			double minLon = 23.8069;
-    			double GCMLatMin = maxLat - 10; 
-    			double GCMLatMax = maxLat + 10;
-    			double GCMLonmin = maxLon - 10;
-    			double GCMLonMax = maxLon + 10;
-    			DistrictID = "461";*/
-    			
+			    			
     		int dist = Integer.parseInt(DistrictID);
 			id = dist;
 			//the id in database is 1 more than the normal id
 			id++;
-			String folderPath2 = folderPath+"/"+DistrictID;
-			File dir2 = new File(folderPath2);
+			/**************Get Grid coordinates******************/
+			double Lon = 0.0;
+			double Lat = 0.0;
+			String filePath = folderPath+"/"+DistrictID;
+			File dir2 = new File(filePath);
 			dir2.mkdirs();
 			String filename = "";
 			String urlString = "";
-			filename = folderPath2+ "/GridCoordinates.tsv";
-			 urlString = servletURLPattern_Coordinates.replace("{{minLat}}", String.valueOf(minLat))
-						.replace("{{maxLat}}",String.valueOf(maxLat)).replace("{{minLon}}", String.valueOf(minLon)).
-						replace("{{maxLon}}", String.valueOf(maxLon)).replace("{{id}}",String.valueOf(id));
-		    System.out.println("urlString :" + urlString);
-		    saveUrl(filename , urlString);
-
-			double Lon = 0.0;
-			double Lat = 0.0;
-			
-			/* Get the soil parameters from the Datalibrary */
-			filename = folderPath2+ "/soil.cdf";
+			String pathname = "";
+			filename = filePath + "/GridCoordinates.tsv";
+			 
+		    /*********** Get the soil parameters from the Datalibrary **************/
+			SimDetailsVO simDetailsVO = CropModel.getSimDetailsMap().get(simId);
+			simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(" -Downloading Soil paramters&lt;/br&gt;"));
+			filename = filePath+ "/soil.cdf";
 			urlString = servletURLPattern_soil.replace("{{minLat}}", String.valueOf(minLat))
 						.replace("{{maxLat}}",String.valueOf(maxLat)).replace("{{minLon}}", String.valueOf(minLon)).
 						replace("{{maxLon}}", String.valueOf(maxLon)).replace("{{id}}",String.valueOf(id));
@@ -348,83 +288,98 @@ public class ServerContentDownloader {
 		    /*Call the soil function to convert the soil into ID*/
 		    //Soil sol = new Soil();			
 			
-			/*Get the rainfall co-ordinates for the dataset */
+		    /*********** Get the grid coordinates from the Datalibrary **************/
+		    simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(" -Downloading Grid Co-ordinates&lt;/br&gt;"));
+		    filename = filePath+ "/GridCoordinates.tsv";
+		    urlString = servletURLPattern_Coordinates.replace("{{minLat}}", String.valueOf(minLat))
+					.replace("{{maxLat}}",String.valueOf(maxLat)).replace("{{minLon}}", String.valueOf(minLon)).
+					replace("{{maxLon}}", String.valueOf(maxLon)).replace("{{id}}",String.valueOf(id));
+	        System.out.println("urlString :" + urlString); 
+			saveUrl(filename , urlString);
 			GridCoordinates grid = new GridCoordinates();
-			Vector vec = grid.Coordinates(folderPath2);
-			Vector rainParameters = new Vector();
+			Vector vec = grid.Coordinates(filename);
+			/**************Get the rainfall co-ordinates for the dataset******************/
+			simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(" -Downloading Rainfall Co-ordinates&lt;/br&gt;"));
+		    Vector rainParameters = new Vector();
 			Vector NHMMrain = new Vector();
 			RainNHMM rnhmm = new RainNHMM();
-			for(int i = 0; i <vec.size();i++)
+			simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(" -Downloading TMax/Tmin and SRad values&lt;/br&gt;"));
+			for(int i = 0; i < vec.size() ;i++)
 			{
 				Lon = Double.parseDouble(vec.get(i).toString());
 				Lat = Double.parseDouble(vec.get(i+1).toString());
-				String pathname = "rainfall"+"-"+Lat+"-"+Lon;
 				i++;
-				filename = folderPath2+"/"+pathname+".cdf";
-			    urlString = servletURLPattern_rainfall.replace("{{Lat}}", String.valueOf(Lat))
-							.replace("{{Lon}}",String.valueOf(Lon)).replace("{{id}}",String.valueOf(id));
+				
+				pathname = "rainfall"+"-"+Lat+"-"+Lon;
+				filename = filePath+"/"+pathname+".cdf";
+				urlString = servletURLPattern_rainfall.replace("{{Lat}}", String.valueOf(Lat))
+						.replace("{{Lon}}",String.valueOf(Lon)).replace("{{id}}",String.valueOf(id));
 			    System.out.println("urlString :" + urlString);
 			    saveUrl(filename , urlString);
-			    
-			    /* this methods builds up the rainfall files for HMM use */				
-				 rainParameters = rnhmm.WriteRain(folderPath2,pathname);
+                			    
+			    /**************make the rainfall files for HMM use ******************/	
+			     rainParameters = rnhmm.WriteRain(filePath,pathname);
 				 NHMMrain.add(rainParameters);
-				
-						 
-				 /* this call saves the Tmax values when it rained */
-				 pathname = "TmaxR"+Lat+"-"+Lon;
-				 filename = folderPath2+"/"+pathname+".tsv";
-				  urlString = servletURLPattern_TmaxAvgR.replace("{{Lat}}", String.valueOf(Lat))
+			    
+				 /********** get Tmax values when it rained *****************/
+				pathname = "TmaxR"+Lat+"-"+Lon;
+			    filename = filePath+"/"+pathname+".tsv";
+				urlString = servletURLPattern_TmaxAvgR.replace("{{Lat}}", String.valueOf(Lat))
 								.replace("{{Lon}}",String.valueOf(Lon));
-				    System.out.println("urlString :" + urlString);
-				    saveUrl(filename , urlString);
-				 /* this call saves the Tmax values when it did not rain */
-				   pathname = "TmaxNR"+Lat+"-"+Lon;
-				   filename = folderPath2+"/"+pathname+".tsv";
-				   urlString = servletURLPattern_TmaxAvgNR.replace("{{Lat}}", String.valueOf(Lat))
-									.replace("{{Lon}}",String.valueOf(Lon));
-				   System.out.println("urlString :" + urlString);
-				   saveUrl(filename , urlString);
+				System.out.println("urlString :" + urlString);
+				saveUrl(filename , urlString);
+				
+				/**********get Tmax values when it did not rain *****************/
+				 pathname = "TmaxNR"+Lat+"-"+Lon;
+			     filename = filePath+"/"+pathname+".tsv";
+			     urlString = servletURLPattern_TmaxAvgR.replace("{{Lat}}", String.valueOf(Lat))
+							.replace("{{Lon}}",String.valueOf(Lon));
+				 System.out.println("urlString :" + urlString);
+				 saveUrl(filename , urlString);
+				
+				 /***********get the Tmin values when it rained *******************/
+				  //System.out.println(Lat + 0.1);
+				  //System.out.println(Lon);
+				  pathname = "TminR"+Lat+"-"+Lon;
+				  filename = filePath+"/"+pathname+".tsv";
+				  urlString = servletURLPattern_TminAvgR.replace("{{Lat}}", String.valueOf(Lat))
+							.replace("{{Lon}}",String.valueOf(Lon));
+				  System.out.println("urlString :" + urlString);
+				  saveUrl(filename , urlString);
+				
+				  /********** get the Tmin values when it not rained *************/
+				  pathname = "TminNR"+Lat+"-"+Lon;
+				  filename = filePath+"/"+pathname+".tsv";
+				  urlString = servletURLPattern_TminAvgNR.replace("{{Lat}}", String.valueOf(Lat))
+							.replace("{{Lon}}",String.valueOf(Lon));
+				  System.out.println("urlString :" + urlString);
+				  saveUrl(filename , urlString);
 				  
-				   /* this call saves the Tmin values when it rained */
-				   pathname = "TminR"+Lat+"-"+Lon;
-				   filename = folderPath2+"/"+pathname+".tsv";
-				   urlString = servletURLPattern_TminAvgR.replace("{{Lat}}", String.valueOf(Lat))
-									.replace("{{Lon}}",String.valueOf(Lon));
-				   System.out.println("urlString :" + urlString);
-				   saveUrl(filename , urlString);
-				   
-				   /* this call saves the Tmin values when it not rained */
-				   pathname = "TminNR"+Lat+"-"+Lon;
-				   filename = folderPath2+"/"+pathname+".tsv";
-				   urlString = servletURLPattern_TminAvgNR.replace("{{Lat}}", String.valueOf(Lat))
-									.replace("{{Lon}}",String.valueOf(Lon));
-				   System.out.println("urlString :" + urlString);
-				   saveUrl(filename , urlString);
-				   
-				   /* this call saves the SRad values when it not rained */
+				  /*********** get the SRad values when it not rained ************/
 				   pathname = "SRadNR"+Lat+"-"+Lon;
-				   filename = folderPath2+"/"+pathname+".tsv";
+				   filename = filePath+"/"+pathname+".tsv";
 				   urlString = servletURLPattern_SRadNR.replace("{{Lat}}", String.valueOf(Lat))
-									.replace("{{Lon}}",String.valueOf(Lon));
+							.replace("{{Lon}}",String.valueOf(Lon));
 				   System.out.println("urlString :" + urlString);
 				   saveUrl(filename , urlString);
 				   
-				   /* this call saves the SRad values when it rained */
+				   /*********** get the SRad values when it rained ***************/
 				   pathname = "SRadR"+Lat+"-"+Lon;
-				   filename = folderPath2+"/"+pathname+".tsv";
+				   filename = filePath+"/"+pathname+".tsv";
 				   urlString = servletURLPattern_SRadR.replace("{{Lat}}", String.valueOf(Lat))
-									.replace("{{Lon}}",String.valueOf(Lon));
+							.replace("{{Lon}}",String.valueOf(Lon));
 				   System.out.println("urlString :" + urlString);
 				   saveUrl(filename , urlString);
+				   /***********END OF METHOD***************/
+				   
 				  
 		      }
 			
-			rnhmm.WriteInputFiles(folderPath2, "sim_nhmm_ind_delexp_params.txt");
-			rnhmm.WriteInputFiles(folderPath2, "lrn_nhmm_ind_delexp_params.txt");
+			//rnhmm.WriteInputFiles(folderPath2, "sim_nhmm_ind_delexp_params.txt");
+			//rnhmm.WriteInputFiles(folderPath2, "lrn_nhmm_ind_delexp_params.txt");
 
 			/**************Builds up the rainfall file to be read by NHMM *************************/
-			File writeFile = new File(folderPath2+"/HMM_Input.txt");
+			/*File writeFile = new File(folderPath2+"/HMM_Input.txt");
 			Writer output = new BufferedWriter(new FileWriter(writeFile));
 				for(int k = 0; k <((Vector) NHMMrain.get(0)).size();k++)
 				{
@@ -433,7 +388,7 @@ public class ServerContentDownloader {
 				}
 			/******************************************************************/
 			
-		    for(int iYear=1982;iYear<2010;iYear++)
+		    /*for(int iYear=1982;iYear<2010;iYear++)
 		    {
 			filename = folderPath2+ "/GCM_"+iYear+".txt";
 			
@@ -461,93 +416,71 @@ public class ServerContentDownloader {
 		    	 outputGCM.flush();
        		}
 		    outputGCM.close();
-			 /*Call the HMM simulations at this point */
+			 //Call the HMM simulations at this point 
 			 
-			 /*Once the dataset for HMM is run...call the NHMM to run at this point*/
-			 System.out.println("THere");
-			 ReadNHMMOutput rd = new ReadNHMMOutput();
+			 //Once the dataset for HMM is run...call the NHMM to run at this point*/
+			 //System.out.println("THere");
+			 //ReadNHMMOutput rd = new ReadNHMMOutput();
 			 
-			 for(int i = 0; i <vec.size();i++)
-				{
-				 Lon = Double.parseDouble(vec.get(i).toString());
-				 Lat = Double.parseDouble(vec.get(i+1).toString());
-				 i++;
-				 
-				 //rd.makeCropInputFiles(folderPath2,Lat,Lon);
-				/*this method calls the soil file for the coordinates */ 
-				 //sol.SoilData(folderPath2,Lat,Lon);
-				 //the soil file is called from inside
-				}
-				 	
+			 	 	
 			 
-			 /*Once the NHMM is ready call the ReadNHMMOutput to build the input rainfall file*/
 			 
 			 /* At this point Call the 
 			/* Write the input files for the crop models */
-				rnhmm.WriteInputFiles(folderPath2, "DATA.CDE");
-				rnhmm.WriteInputFiles(folderPath2, "DETAIL.CDE");
-				rnhmm.WriteInputFiles(folderPath2, "DSMODEL.ERR");
-				rnhmm.WriteInputFiles(folderPath2, "GCOEFF.CDE");
-				rnhmm.WriteInputFiles(folderPath2, "GRSTAGE.CDE");
-				rnhmm.WriteInputFiles(folderPath2, "JDATE.CDE");
-				rnhmm.WriteInputFiles(folderPath2, "PEST.CDE");
-				rnhmm.WriteInputFiles(folderPath2, "SGCER040.CUL");
-				rnhmm.WriteInputFiles(folderPath2, "SGCER040.ECO");
-				rnhmm.WriteInputFiles(folderPath2, "SGCER040.SPE");
-				rnhmm.WriteInputFiles(folderPath2, "Simulation.cde");
-				rnhmm.WriteInputFiles(folderPath2, "SOIL.CDE");
-				rnhmm.WriteInputFiles(folderPath2, "WEATHER.CDE");
-				rnhmm.WriteInputFiles(folderPath2, "soil.sol");
-				rnhmm.WriteInputFiles(folderPath2, "GATI0301.WTH");
-				//rnhmm.WriteInputFiles(folderPath2, "GCM.txt");
-				//rnhmm.WriteInputFiles(folderPath2, "DSSATCSM40");
-				rnhmm.WriteInputFiles(folderPath2, "1-21.WTH");
-
+				
 				/********Read the crop Model File into the Folder*********/
-				FileChannel ic = new FileInputStream("DSSATCSM40").getChannel();
+				/*FileChannel ic = new FileInputStream("DSSATCSM40").getChannel();
 				System.out.println(folderPath2);
 				FileChannel oc = new FileOutputStream(folderPath2+"/DSSATCSM40").getChannel();
 				ic.transferTo(0,ic.size(),oc);
 				ic.close();
-				oc.close();
+				oc.close();*/
 				
-			//}
-			//System.out.println(HMMInput);
-
+			WriteModelInput modelINP = new WriteModelInput();
+			simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(" -Downloading DSSAT BASIC FILES&lt;/br&gt;"));
+			modelINP.WriteInputFiles(filePath, "DATA.CDE");
+			modelINP.WriteInputFiles(filePath, "DETAIL.CDE");
+			modelINP.WriteInputFiles(filePath, "DSMODEL.ERR");
+			modelINP.WriteInputFiles(filePath, "GCOEFF.CDE");
+			modelINP.WriteInputFiles(filePath, "GRSTAGE.CDE");
+			modelINP.WriteInputFiles(filePath, "JDATE.CDE");
+			modelINP.WriteInputFiles(filePath, "PEST.CDE");
+			modelINP.WriteInputFiles(filePath, "Simulation.cde");
+			modelINP.WriteInputFiles(filePath, "SOIL.CDE");
+			modelINP.WriteInputFiles(filePath, "WEATHER.CDE");
+			modelINP.WriteInputFiles(filePath, "soil.sol");
+			modelINP.WriteInputFiles(filePath, "GATI0301.WTH");
+			modelINP.WriteInputFiles(filePath, "SoilType.tsv");
+			modelINP.WriteInputFiles(filePath, "DSSATCSM40");
+			//rnhmm.WriteInputFiles(filePath, "GCM.txt");
+			//rnhmm.WriteInputFiles(filePath, "DSSATCSM40");
+			modelINP.WriteInputFiles(filePath, "1-21.WTH");
+			simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(" -Downloading DSSAT CROP FILES&lt;/br&gt;"));
+			if (Crop.equalsIgnoreCase("Sorghum"))
+			{
+				modelINP.WriteInputFiles(filePath, "SGCER040.CUL");
+				modelINP.WriteInputFiles(filePath, "SGCER040.ECO");
+				modelINP.WriteInputFiles(filePath, "SGCER040.SPE");
+				modelINP.WriteInputFiles(filePath, "DSSAT40_Sorghum.INP");
+			}
+			else if (Crop.equalsIgnoreCase("Maize"))
+			{
+				modelINP.WriteInputFiles(filePath, "MZCER.CUL");
+				modelINP.WriteInputFiles(filePath, "MZCER.ECO");
+				modelINP.WriteInputFiles(filePath, "MZCER.SPE");
+				modelINP.WriteInputFiles(filePath, "DSSAT40_Maize.INP");
+			}
+			/***********END OF METHOD***************/
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}			
 			
 
-		    filename = folderPath2+ "/Tmax.cdf";
-			urlString = servletURLPattern_Tmax.replace("{{minLat}}", String.valueOf(minLat))
-						.replace("{{maxLat}}",String.valueOf(maxLat)).replace("{{minLon}}", String.valueOf(minLon)).
-						replace("{{maxLon}}", String.valueOf(maxLon)).replace("{{id}}",String.valueOf(id));
-		    //System.out.println("urlString :" + urlString);
-		    saveUrl(filename , urlString);
-
-		    /*filename = folderPath2+ "/[X+Y]Tmin.tsv";
-			urlString = servletURLPattern_Tmin.replace("{{minLat}}", String.valueOf(minLat))
-						.replace("{{maxLat}}",String.valueOf(maxLat)).replace("{{minLon}}", String.valueOf(minLon)).
-						replace("{{maxLon}}", String.valueOf(maxLon)).replace("{{id}}",String.valueOf(id));
-		    //System.out.println("urlString :" + urlString);
-		    saveUrl(filename , urlString);*/
 		    
 		    
 		    
-
-			//}//end of while
-		//}//end of if
-
-
-		}
-		/*catch(ClassNotFoundException Exception)	{
-			System.out.println("error occoured during loading the driver");
-		}*/
-		catch(Exception e){
-		System.out.println("error occoured during connecting " + e);
-		}
-
-
-
-	}
 
 	/**
 	 *
@@ -570,7 +503,6 @@ public class ServerContentDownloader {
 				boolean isConnected = (conn.getContentLength() > 0);
 				System.out.println("isConnected: " + isConnected);
 				in = new BufferedInputStream(conn.getInputStream());
-
 				fout = new FileOutputStream(filename);
 				System.out.println("filename: " + filename);
 				byte data[] = new byte[1024];
@@ -579,6 +511,8 @@ public class ServerContentDownloader {
 				{
 					fout.write(data, 0, count);
 				}
+				fout.flush();
+				
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -602,10 +536,7 @@ public class ServerContentDownloader {
 					e.printStackTrace();
 				}
 		}
-	}
-	   //static final String kuser = "kjensen"; // your account name
-	   //static final String kpass = "7o29tkhc"; // your password for the account
-	   
+	}	   
 	   static final String kuser = "ab3466"; // your account name
 	   static final String kpass = "fqqlwe"; // your password for the account
 
