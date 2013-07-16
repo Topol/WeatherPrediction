@@ -81,8 +81,8 @@ public class ReadHistoricalRainfall {
 		Vector vGrid = new Vector();
 		double Lon = 0.0;
 		double Lat = 0.0;
-		int vYears = 11;
-		int vSimulations = 10;
+		int vYears = 60;
+		int vSimulations = 0;
 		int vSoil = 0;
 		Vector vSoilType;
         System.out.println(vecGrid.size());
@@ -277,7 +277,7 @@ public class ReadHistoricalRainfall {
 		        
 		      
 		        /********************Writes to an external file the outputs********************/	
-		    	System.out.println("GridPoint\tSimulation\tYear\tSoil\tCropOutput"); 
+		    	System.out.println("GridPoint\tGridNumber\tYear\tSoil\tCropOutput"); 
 		        //String pathname = "Data/2011-07-21/188/";
 		        String pathname = filepath;
 		        File writeFile = new File(pathname,"HistoricalResults.tsv");
@@ -307,11 +307,11 @@ public class ReadHistoricalRainfall {
 		    	    		   {
 		     				   String soilType = vSoilType.get(l + 1).toString().substring(0,4);
 		     				   //System.out.println(c.get(l));
-		     				  simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(Latitude + "\t" + Longitude + "\t"+ i +"\t"+ century + year + "\t"+soilType+ "\t"+ c.get(l).toString() + "&lt;/br&gt;") );
-		     				       System.out.println( Latitude + "\t" + Longitude + "\t"+ i +"\t"+ century + year + "\t"+soilType+ "\t"+ c.get(l).toString()); 
-		    	    			   output.write( Latitude + "\t" + Longitude + "\t"+ i +"\t"+ century + year + "\t"+soilType+ "\t"+ c.get(l).toString());
-		    	    			   output.write("\n");
-		    	    			   output.flush();
+		     				   simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(Latitude + "\t" + Longitude + "\t"+ i +"\t"+ century + year + "\t"+soilType+ "\t"+ c.get(l).toString() + "&lt;/br&gt;") );
+		     				   System.out.println( Latitude + "\t" + Longitude + "\t"+ i +"\t"+ century + year + "\t"+soilType+ "\t"+ c.get(l).toString()); 
+		    	    		   output.write( Latitude + "\t" + Longitude + "\t"+ i +"\t"+ century + year + "\t"+soilType+ "\t"+ c.get(l).toString());
+		    	    		   output.write("\n");
+		    	    		   output.flush();
 		    	    		   }
 		     		   }
 		        }

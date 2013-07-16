@@ -47,7 +47,8 @@
 			<option value="6">Bajra</option>
 			<option value="7">Sorghum</option>
 			<option value="8">Peanut</option>
-			<option value="9">Sugarcane</option> 
+			<option value="9">Sugarcane</option>
+			<option value="9">Soyabean</option> 
 		</select><br/><br/></li>
  
    <li><b>Cropping Season:</b><img src="images/spacer.gif" width="100px" height="1px"><select name="selCropSeason" id="selCropSeason" style="font-family : verdana; font-size : 8pt">

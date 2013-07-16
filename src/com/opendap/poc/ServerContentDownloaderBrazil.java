@@ -334,6 +334,13 @@ public class ServerContentDownloaderBrazil {
 				modelINP.WriteInputFiles(filePath, "MZCER.SPE");
 				modelINP.WriteInputFiles(filePath, "DSSAT40_Maize.INP");
 			}
+			else if (Crop.equalsIgnoreCase("Soyabean"))
+			{
+				//modelINP.WriteInputFiles(filePath, "MZCER.CUL");
+				//modelINP.WriteInputFiles(filePath, "MZCER.ECO");
+				//modelINP.WriteInputFiles(filePath, "MZCER.SPE");
+				modelINP.WriteInputFiles(filePath, "DSSAT40_Soyabean.INP");
+			}
 			/***********END OF METHOD***************/
 		}
 		catch(Exception e){

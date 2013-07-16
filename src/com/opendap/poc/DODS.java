@@ -85,7 +85,7 @@ import java.util.Date;
 	 public void buildDODS(WeatherPredictionVO objWeather, long simId, String simCode) throws IOException
 	 {
 		 SimDetailsVO simDetailsVO = CropModel.getSimDetailsMap().get(simId);
-		 simId = 1;
+		 //simId = 1;
 		 if(null != simDetailsVO){
 			 
 			 simDetailsVO.setStatus("In Progress");
@@ -100,21 +100,36 @@ import java.util.Date;
 			 String Country =  objWeather.getCountry();
 			 String State = objWeather.getState();
 			 long CountryNo = objWeather.getCountryNo();
-			 //String UnitID = objWeather.getDistrict();//kheda
-			 String UnitID = "187";//kheda
+			 String UnitID = objWeather.getDistrict().replaceAll("\\s","");
+			 //String UnitID = "196";//kheda
 			 //String UnitID = "188";//kheda
 			 String Crop = objWeather.getCrop();
 			 String CropSeason = objWeather.getCropSeason();
 			 String GCM =  objWeather.getGcm();
 		     System.out.println(simpleDateFormat.format(new Date()));
 			 
-			 /**************Download server dataset******************/
-			 ServerContentDownloader serverContentDownloader =  new ServerContentDownloader();
-			 serverContentDownloader.createAndSaveUrl(simId, simpleDateFormat.format(new Date()), CountryNo, UnitID, Crop, CropSeason, GCM);
-			 //ServerContentDownloaderBrazil serverContentDownloader =  new ServerContentDownloaderBrazil();
-			 //serverContentDownloader.createAndSaveUrl(simId, simpleDateFormat.format(new Date()), CountryNo, UnitID, Crop, CropSeason, GCM);
-			 
-			 simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(" -Running Simulation&lt;/br&gt;"));
+		     if(CountryNo == 1)
+		     {
+		     /**************Run for India***************************/
+		          /**************Download server dataset******************/
+		     		ServerContentDownloader serverContentDownloader =  new ServerContentDownloader();
+		     		serverContentDownloader.createAndSaveUrl(simId, simpleDateFormat.format(new Date()), CountryNo, UnitID, Crop, CropSeason, GCM);
+		     		/***************** Build the crop output based on the historical data ********************/
+					 ReadHistoricalRainfall hisrain = new ReadHistoricalRainfall();
+					hisrain.makeCropInputFiles(simId, simpleDateFormat.format(new Date()), CountryNo, UnitID, Crop, CropSeason, GCM); 
+		     }
+		     else if(CountryNo == 2)
+		     {		
+			         System.out.println("**************Run for Brazil***************************");
+		    	     
+		     		/**************Download server dataset******************/
+					ServerContentDownloaderBrazil serverContentDownloaderBrazil =  new ServerContentDownloaderBrazil();
+					serverContentDownloaderBrazil.createAndSaveUrl(simId, simpleDateFormat.format(new Date()), CountryNo, UnitID, Crop, CropSeason, GCM);
+					/***************** Build the crop output based on the historical data ********************/
+					ReadHistoricalRainfall_Brazil hisrainBrazil = new ReadHistoricalRainfall_Brazil();
+					hisrainBrazil.makeCropInputFiles(simId, simpleDateFormat.format(new Date()), CountryNo, UnitID, Crop, CropSeason, GCM);
+		     }
+					simDetailsVO.setStatusMessage(simDetailsVO.getStatusMessage().append(" -Running Simulation&lt;/br&gt;"));
 			 
 			 
 			 /***********Call the NHMM to build up the rainfall parameters**************/ 
@@ -130,8 +145,8 @@ import java.util.Date;
 				
 			
 			/***************** Build the crop output based on the historical data ********************/
-			 ReadHistoricalRainfall hisrain = new ReadHistoricalRainfall();
-			hisrain.makeCropInputFiles(simId, simpleDateFormat.format(new Date()), CountryNo, UnitID, Crop, CropSeason, GCM);
+			 //ReadHistoricalRainfall hisrain = new ReadHistoricalRainfall();
+			//hisrain.makeCropInputFiles(simId, simpleDateFormat.format(new Date()), CountryNo, UnitID, Crop, CropSeason, GCM);
 			//ReadHistoricalRainfall_Brazil hisrain = new ReadHistoricalRainfall_Brazil();
 			//hisrain.makeCropInputFiles(simId, simpleDateFormat.format(new Date()), CountryNo, UnitID, Crop, CropSeason, GCM);
 			 /***********************Write the output in Netcdf file format*****************************/

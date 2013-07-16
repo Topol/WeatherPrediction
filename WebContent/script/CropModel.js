@@ -333,7 +333,8 @@ function runSimulation(simCode) {
 	
 	countryNo = document.DODSForm.selCountry.value;
 	stateNo = document.DODSForm.selState.value;
-	districtNo = document.DODSForm.selDistrict.value;
+	districtNo = document.DODSForm.selDistrict.text;
+	//districtID = document.DODSForm.selDistrict.ID;
 	cropNo = document.DODSForm.selCropName.value;
 	generalCirculationModel = document.DODSForm.selGeneralCirculationModel.value;
 	cropSeasonNo = document.DODSForm.selCropSeason.value;
@@ -365,7 +366,7 @@ function runSimulation(simCode) {
 		gcmSeasonObj = document.DODSForm.selGCMSeason;
 
 		state = stateObj.options[stateObj.selectedIndex].text;
-		district = districtObj.options[districtObj.selectedIndex].text;
+		district = districtObj.options[districtObj.selectedIndex].value;
 		cropName = cropNameObj.options[cropNameObj.selectedIndex].text;
 		gcm = gcmObj.options[gcmObj.selectedIndex].text;
 		cropSeason = cropSeasonObj.options[cropSeasonObj.selectedIndex].text;

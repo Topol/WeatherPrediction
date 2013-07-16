@@ -6,10 +6,9 @@ try{
 	String country = request.getParameter("cntryNo");
 	String state = request.getParameter("stateNo");
 	//obtain a reference to ServletContext
-	 
+	
 	ServletContext context = pageContext.getServletContext();
 	BufferedReader input = new BufferedReader(new FileReader(context.getRealPath( "data/C_" + country + "_S_" + state + "_Region.xml")));
-		
 	
 	String line = "";
 	while ((line = input.readLine()) != null) {
