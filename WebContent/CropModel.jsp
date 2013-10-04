@@ -43,13 +43,22 @@
 			<option value="2">Rice</option>
 			<option value="3">Maize</option>
 			<option value="4">Millet</option>
-			<option value="5">Jowar</option>
+			<option value="5">Barley</option>
 			<option value="6">Bajra</option>
 			<option value="7">Sorghum</option>
 			<option value="8">Peanut</option>
 			<option value="9">Sugarcane</option>
-			<option value="9">Soyabean</option> 
-		</select><br/><br/></li>
+			<option value="10">Soyabean</option> 
+			<option value="11">Cabbage</option>
+			<option value="12">Chickpea</option>
+			<option value="13">Pineapple</option>
+			<option value="14">Potato</option>
+			<option value="15">GreenBean</option>
+			<option value="16">Cotton</option>
+			<option value="17">CowPea</option>
+			<option value="18">DryBean</option>
+			
+			</select><br/><br/></li>
  
    <li><b>Cropping Season:</b><img src="images/spacer.gif" width="100px" height="1px"><select name="selCropSeason" id="selCropSeason" style="font-family : verdana; font-size : 8pt">
 			<option value="0" selected>..Select..</option> 

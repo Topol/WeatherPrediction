@@ -470,6 +470,79 @@ public class ServerContentDownloader {
 				modelINP.WriteInputFiles(filePath, "MZCER.SPE");
 				modelINP.WriteInputFiles(filePath, "DSSAT40_Maize.INP");
 			}
+			else if (Crop.equalsIgnoreCase("Wheat"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_wheat.INP");
+			}
+			else if (Crop.equalsIgnoreCase("Rice"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_rice.INP");
+			}
+			else if (Crop.equalsIgnoreCase("Maize"))
+			{
+				modelINP.WriteInputFiles(filePath, "MZCER.CUL");
+				modelINP.WriteInputFiles(filePath, "MZCER.ECO");
+				modelINP.WriteInputFiles(filePath, "MZCER.SPE");
+				modelINP.WriteInputFiles(filePath, "DSSAT40_Maize.INP");
+			}
+			else if (Crop.equalsIgnoreCase("Millet"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_millet.INP");
+			}
+			else if (Crop.equalsIgnoreCase("Barley"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_barley.INP");
+			}
+			else if (Crop.equalsIgnoreCase("Bajra"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_bajra.INP");
+			}
+			else if (Crop.equalsIgnoreCase("Peanut"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_peanut.INP");
+			}
+			else if (Crop.equalsIgnoreCase("Sugarcane"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_sugarcane.INP");
+			}
+			else if (Crop.equalsIgnoreCase("Soyabean"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_Soyabean.INP");
+			}
+			else if (Crop.equalsIgnoreCase("Soyabean"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_Cabbage.INP");
+			}
+			else if (Crop.equalsIgnoreCase("Chickpea"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_chickpea.INP");
+			}
+			else if (Crop.equalsIgnoreCase("Pineapple"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_pineapple.INP");
+			}
+			else if (Crop.equalsIgnoreCase("Potato"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_potato.INP");
+			}
+			else if (Crop.equalsIgnoreCase("GreenBean"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_greenbean.INP");
+			}
+			else if (Crop.equalsIgnoreCase("Cotton"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_cotton.INP");
+			}
+			else if (Crop.equalsIgnoreCase("CowPea"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_cowpea.INP");
+			}
+			else if (Crop.equalsIgnoreCase("DryBean"))
+			{
+				modelINP.WriteInputFiles(filePath, "DSSAT40_drybean.INP");
+			}
+			
+			
 			/***********END OF METHOD***************/
 		}
 		catch(Exception e){
