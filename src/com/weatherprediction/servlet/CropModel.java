@@ -75,8 +75,8 @@ public class CropModel extends HttpServlet {
 			sb.append("</links></simulation>");
 			responseVal = sb;
 		}
-		System.out.println(responseVal.toString());
-		out.println(responseVal);
+		//System.out.println(responseVal.toString());
+		//out.println(responseVal);
 	}
 
 	private void runSimulation(String simCode,
@@ -97,7 +97,7 @@ public class CropModel extends HttpServlet {
 		responseVal.append("</simulation>");
 		System.out.println(responseVal.toString());
 		
-		out.println(responseVal);
+		//out.println(responseVal);
 	}
 
 	private WeatherPredictionVO setSimulationParameters(HttpServletRequest request) {
